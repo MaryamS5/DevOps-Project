@@ -1,72 +1,35 @@
-name: CI/CD Pipeline - Zesty Bite
+name: Simple CI/CD Pipeline - Zesty Bite
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/zesty-bite
+  IMAGE_NAME: maryamsohail123/dev-project:zesty-bite
 
 jobs:
   build-and-push:
-    name: Build & Push Docker image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
         with:
-          context: ./zestybites
-          file: ./zestybites/Dockerfile
+          context: .
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.IMAGE_NAME }}:latest
-
-  test:
-    name: Pull image & run tests
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Pull image and run tests (container)
-        run: |
-          docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} echo " Container built successfully!"
-
-  deploy-ec2:
-    name: Deploy to EC2 via SSH
-    needs: [ build-and-push, test ]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy to EC2 (SSH)
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker pull ${{ env.IMAGE_NAME }}:latest
-            docker stop zesty_app || true
-            docker rm zesty_app || true
-            docker run -d --name zesty_app -p 80:3000 --restart unless-stopped ${{ env.IMAGE_NAME }}:latest
