@@ -49,7 +49,7 @@ jobs:
       - name: Pull image and run tests (container)
         run: |
           docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} echo "✅ Container built successfully!"
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} echo " Container built successfully!"
 
   deploy-ec2:
     name: Deploy to EC2 via SSH
