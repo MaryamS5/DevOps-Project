@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 env:
-  IMAGE_NAME: maryamsohail123/dev-project:zesty-bite
+  IMAGE_NAME: maryamsohail123/dev-project-zesty-bite
 
 jobs:
   build-and-push:
