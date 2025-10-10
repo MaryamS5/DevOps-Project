@@ -22,4 +22,4 @@ The workflow is triggered **automatically** whenever code is pushed or merged in
 ### ▶ Run Locally
 ```bash
 docker build -t zesty-bite .
-docker run -d -p 3000:3000 zesty-bite
+docker run -d -p 3000:3000 zesty-bitegit add .
