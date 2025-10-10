@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 env:
-  IMAGE_NAME: maryamsohail123/dev-project:zesty-bite
+  IMAGE_NAME: maryamsohail123/dev-project
 
 jobs:
   build-and-push:
@@ -31,5 +31,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:zesty-bite
