@@ -7,37 +7,29 @@ on:
     branches: ["main"]
 
 env:
-  IMAGE_NAME: maryamsohail123/dev-project
+  IMAGE_NAME: maryamsohail123/dev-project:zesty-bite
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1 — Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2 — Set up Docker Buildx (needed for build/push)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 3 — Log in to Docker Hub using secrets
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Step 4 — Build and push Docker image
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile     
+          file: ./Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}:zesty-bite
-
-      # Step 5 (Optional) — Test Docker image
-      - name: Test Docker image
-        run: docker run --rm ${{ env.IMAGE_NAME }}:zesty-bite echo "Container built successfully!"
+          tags: ${{ env.IMAGE_NAME }}:latest
