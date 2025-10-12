@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -31,4 +30,4 @@ jobs:
           tags: maryamsohail123/zesty-bite:latest
 
       - name: Confirm push
-        run: echo " Image pushed successfully: maryamsohail123/zesty-bite:latest"
+        run: echo "Image pushed successfully:maryamsohail123/zesty-bite:latest"
