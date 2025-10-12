@@ -1,0 +1,48 @@
+
+
+###  Full YAML File 
+name: CI/CD Pipeline - Zesty Bite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: docker build -t maryamsohail123/zesty-bite:latest .
+
+  test:
+    name:  Test Container
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Run a test container
+        run: |
+          docker run -d -p 3000:3000 --name test zesty-bite:latest
+          sleep 5
+          docker ps | grep test
+          docker stop test && docker rm test
+
+  push:
+    name:  Push to Docker Hub
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker Image
+        run: docker push maryamsohail123/zesty-bite:latest
